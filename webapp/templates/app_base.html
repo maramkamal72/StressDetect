@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_macros.html" import logo, flashes %}
+{% block body %}
+<div class="topbar-mobile">
+  {{ logo() }}
+  <button class="btn btn-ghost btn-sm" id="sidebarToggle" aria-label="Open menu"><i class="bi bi-list"></i></button>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    {{ logo() }}
+    <nav class="side-nav">
+      <a class="side-link {{ 'active' if active == 'dashboard' }}" href="{{ url_for('pages.dashboard') }}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+      <a class="side-link {{ 'active' if active == 'assessment' }}" href="{{ url_for('pages.assessment') }}"><i class="bi bi-plus-circle"></i> New Assessment</a>
+      <a class="side-link {{ 'active' if active == 'history' }}" href="{{ url_for('pages.history') }}"><i class="bi bi-journal-text"></i> History Log</a>
+      <a class="side-link {{ 'active' if active == 'recommendations' }}" href="{{ url_for('pages.recommendations') }}"><i class="bi bi-stars"></i> Recommendations</a>
+      <a class="side-link {{ 'active' if active == 'profile' }}" href="{{ url_for('pages.profile') }}"><i class="bi bi-person-gear"></i> Student Profile</a>
+    </nav>
+    <div class="side-user">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <span class="avatar">{{ current_user.initials }}</span>
+        <div style="min-width:0">
+          <div class="fw-semibold text-truncate" style="font-size:.9rem">{{ current_user.full_name }}</div>
+          <div class="text-truncate text-muted-sd" style="font-size:.75rem">{{ current_user.email }}</div>
+        </div>
+      </div>
+      <form method="post" action="{{ url_for('accounts.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="side-link w-100 border-0 bg-transparent text-start"><i class="bi bi-box-arrow-right"></i> Sign Out</button>
+      </form>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="main-inner">
+      {{ flashes() }}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+<script>
+  (function () {
+    var sidebar = document.getElementById('sidebar'), backdrop = document.getElementById('sidebarBackdrop'),
+        toggle = document.getElementById('sidebarToggle');
+    function setOpen(open) { sidebar.classList.toggle('open', open); backdrop.classList.toggle('show', open); }
+    if (toggle) { toggle.addEventListener('click', function () { setOpen(!sidebar.classList.contains('open')); }); }
+    if (backdrop) { backdrop.addEventListener('click', function () { setOpen(false); }); }
+  })();
+</script>
+{% endblock %}

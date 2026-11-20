@@ -1,0 +1,23 @@
+{% macro logo(link=True) %}
+{% if link %}<a href="{{ url_for('pages.home') }}" class="logo">{% else %}<span class="logo">{% endif %}
+  <img class="logo-mark" src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="">
+  <span class="logo-text">Stress<span>Detect</span></span>
+{% if link %}</a>{% else %}</span>{% endif %}
+{% endmacro %}
+
+{% macro flashes() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category if category in ('success','danger','warning','info') else 'info' }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endwith %}
+{% endmacro %}
+
+{% macro level_badge(level, index=None, big=False) %}
+<span class="lvl-badge {{ level|lower }}{{ ' lg' if big else '' }}">{{ level }}{% if index is not none %} ({{ index }}){% endif %}</span>
+{% endmacro %}
+
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endmacro %}

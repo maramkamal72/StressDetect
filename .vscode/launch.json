@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    { "name": "StressDetect: run website", "type": "debugpy", "request": "launch",
+      "program": "${workspaceFolder}/start_app.py", "console": "integratedTerminal" },
+    { "name": "StressDetect: train model", "type": "debugpy", "request": "launch",
+      "module": "model_training.train_model", "console": "integratedTerminal" },
+    { "name": "StressDetect: run tests", "type": "debugpy", "request": "launch",
+      "module": "unittest", "args": ["tests.test_webapp", "-v"], "console": "integratedTerminal" }
+  ]
+}

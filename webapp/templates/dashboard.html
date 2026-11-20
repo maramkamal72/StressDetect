@@ -1,0 +1,91 @@
+{% extends "app_base.html" %}
+{% from "_macros.html" import level_badge %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>{{ 'Welcome' if first_visit else 'Welcome back' }}, {{ current_user.first_name }}</h1><p>Track your stress assessments and the suggestions that go with them.</p></div>
+  <a class="btn btn-brand" href="{{ url_for('pages.assessment') }}"><i class="bi bi-plus-lg"></i> New Assessment</a>
+</div>
+
+{% if latest %}
+<div class="row g-3 mb-3">
+  <div class="col-md-6 col-xl-3"><div class="stat-card accent-teal">
+    <span class="chip chip-teal stat-icon"><i class="bi bi-calendar-check"></i></span>
+    <div class="stat-label">Latest assessment</div>
+    <div class="stat-value">{{ latest.prediction_date|dt('%d %b %Y') }}</div>
+    <div class="stat-sub">Completed {{ latest_ago }}</div></div></div>
+  <div class="col-md-6 col-xl-3"><div class="stat-card accent-dark">
+    <span class="chip chip-dark stat-icon"><i class="bi bi-speedometer2"></i></span>
+    <div class="stat-label">Stress level</div>
+    <div class="stat-value">{{ level_badge(latest.stress_level, big=True) }}</div>
+    <div class="stat-sub">Index {{ latest.stress_index }} out of 100</div></div></div>
+  <div class="col-md-6 col-xl-3"><div class="stat-card accent-slate">
+    <span class="chip chip-slate stat-icon"><i class="bi bi-collection"></i></span>
+    <div class="stat-label">Total evaluations</div>
+    <div class="stat-value">{{ total }} Assessment{{ '' if total == 1 else 's' }}</div>
+    <div class="stat-sub">Retake every couple of weeks</div></div></div>
+  <div class="col-md-6 col-xl-3"><div class="stat-card highlight accent-teal">
+    <span class="chip chip-teal stat-icon"><i class="bi bi-lightbulb"></i></span>
+    <div class="stat-label" style="color:var(--teal-dark)">Top suggestion</div>
+    {% if top_suggestion %}
+      <div class="stat-value" style="font-size:1.05rem;padding-right:2.5rem">{{ top_suggestion.title }}</div>
+      <div class="stat-sub">{{ top_suggestion.detail[:80] }}{{ '...' if top_suggestion.detail|length > 80 }}</div>
+    {% else %}<div class="stat-value" style="font-size:1.05rem">Nothing urgent</div>{% endif %}</div></div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-lg-8"><div class="sd-card h-100">
+    <h2><i class="bi bi-graph-up-arrow text-muted-sd me-2"></i>Stress index progression</h2>
+    {% if chart_values|length > 1 %}
+      <div style="position:relative;height:260px"><canvas id="trendChart"></canvas></div>
+    {% else %}
+      <p class="text-muted-sd mb-0">Complete at least two assessments to see your trend here.</p>
+    {% endif %}
+  </div></div>
+  <div class="col-lg-4"><div class="sd-card h-100">
+    <h2><i class="bi bi-sun text-muted-sd me-2"></i>Try this today</h2>
+    <div class="plan-item Suggested mb-2"><div class="plan-ico"><i class="bi bi-wind"></i></div>
+      <div><div class="t">{{ try_today.title }}</div><div class="d">{{ try_today.mins }} min. {{ try_today.text }}</div></div></div>
+    <a href="{{ url_for('pages.recommendations') }}" class="fw-semibold" style="font-size:.9rem">See all recommendations</a>
+  </div></div>
+</div>
+
+<div class="sd-card">
+  <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="mb-0">Recent assessments</h2>
+    <a href="{{ url_for('pages.history') }}" class="fw-semibold" style="font-size:.9rem">View full history</a></div>
+  <div class="table-wrap"><table class="sd-table">
+    <thead><tr><th>Date &amp; time</th><th>Stress level</th><th>Key factors</th><th></th></tr></thead>
+    <tbody>
+    {% for p in recent %}
+      <tr><td class="fw-semibold">{{ p.prediction_date|dt }}</td>
+          <td>{{ level_badge(p.stress_level, p.stress_index) }}</td>
+          <td>{{ p.key_factors_text }}</td>
+          <td class="text-end"><a href="{{ url_for('pages.results', prediction_id=p.prediction_id) }}">View</a></td></tr>
+    {% endfor %}
+    </tbody></table></div>
+</div>
+{% else %}
+<div class="sd-card text-center py-5">
+  <div class="feature-icon chip-teal mx-auto"><i class="bi bi-clipboard2-pulse"></i></div>
+  <h2 class="h4">No assessments yet</h2>
+  <p class="text-muted-sd mx-auto" style="max-width:28rem">Take your first stress assessment. It has 20 statements and takes about five minutes.</p>
+  <a class="btn btn-brand" href="{{ url_for('pages.assessment') }}">Start your first assessment</a>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if chart_values|length > 1 %}
+<script src="{{ url_for('static', filename='vendor/chartjs/chart.umd.js') }}"></script>
+<script>
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: { labels: {{ chart_labels|tojson }},
+            datasets: [{ label: 'Stress index', data: {{ chart_values|tojson }}, borderColor: '#0D9488',
+                         backgroundColor: 'rgba(13,148,136,.14)', fill: true, tension: .35, pointRadius: 5,
+                         pointBackgroundColor: '#115E59', pointBorderColor: '#fff', pointBorderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+               scales: { y: { min: 0, max: 100, title: { display: true, text: 'Index (0 low, 100 high)' } } } }
+  });
+</script>
+{% endif %}
+{% endblock %}

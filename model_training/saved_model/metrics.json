@@ -1,0 +1,101 @@
+{
+  "accuracy": 0.8864,
+  "precision_macro": 0.8873,
+  "recall_macro": 0.8868,
+  "f1_macro": 0.8862,
+  "f1_macro_with_5_level_answers": 0.8771,
+  "cv_macro_f1_all_students": 0.8793,
+  "per_level": {
+    "Low": {
+      "precision": 0.9117647058823529,
+      "recall": 0.8378378378378378,
+      "f1-score": 0.8732394366197183,
+      "support": 74.0
+    },
+    "Moderate": {
+      "precision": 0.881578947368421,
+      "recall": 0.9305555555555556,
+      "f1-score": 0.9054054054054054,
+      "support": 72.0
+    },
+    "High": {
+      "precision": 0.868421052631579,
+      "recall": 0.8918918918918919,
+      "f1-score": 0.88,
+      "support": 74.0
+    },
+    "accuracy": 0.8863636363636364,
+    "macro avg": {
+      "precision": 0.8872549019607844,
+      "recall": 0.8867617617617617,
+      "f1-score": 0.8862149473417079,
+      "support": 220.0
+    },
+    "weighted avg": {
+      "precision": 0.8873065015479877,
+      "recall": 0.8863636363636364,
+      "f1-score": 0.886040488632038,
+      "support": 220.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      62,
+      4,
+      8
+    ],
+    [
+      3,
+      67,
+      2
+    ],
+    [
+      3,
+      5,
+      66
+    ]
+  ],
+  "best_settings": {
+    "max_depth": null,
+    "min_samples_leaf": 2,
+    "n_estimators": 400
+  },
+  "students_for_training": 880,
+  "students_for_testing": 220,
+  "features": [
+    "study_load",
+    "academic_performance",
+    "basic_needs",
+    "future_career_concerns",
+    "sleep_quality",
+    "social_support",
+    "anxiety_level",
+    "depression"
+  ],
+  "scikit_learn_version": "1.9.1",
+  "warning": "These scores come from a clean public dataset whose origin is undocumented. They show the pipeline works; they are not proof of accuracy on real students, and the mapping from the 20 questionnaire items to these 8 features has not been validated.",
+  "feature_importance": {
+    "study_load": 0.0343,
+    "academic_performance": 0.1407,
+    "basic_needs": 0.1469,
+    "future_career_concerns": 0.1083,
+    "sleep_quality": 0.1645,
+    "social_support": 0.1204,
+    "anxiety_level": 0.1315,
+    "depression": 0.1533
+  },
+  "answer_score_ranges": {
+    "Low": [
+      0.0851,
+      0.4901
+    ],
+    "Moderate": [
+      0.4093,
+      0.5298
+    ],
+    "High": [
+      0.5442,
+      0.8117
+    ]
+  }
+}

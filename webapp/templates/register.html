@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_macros.html" import logo, csrf %}
+{% block title %}Create account{% endblock %}
+{% block nav %}
+<div class="auth-top"><div class="container d-flex justify-content-between align-items-center">
+  {{ logo() }}<a class="back" href="{{ url_for('pages.home') }}">Back to <b>Home</b></a>
+</div></div>
+{% endblock %}
+{% block footer %}{% endblock %}
+{% block content %}
+<div class="auth-wrap"><div class="container">
+  <div class="auth-card wide">
+    <h1 class="h3 mb-1">Create your account</h1>
+    <p class="text-muted-sd mb-4">Your details help show the right context with your results. They are only visible to you.</p>
+    <form method="post" novalidate>
+      {{ csrf() }}
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label" for="full_name">Full name</label>
+          <input class="form-control" id="full_name" name="full_name" value="{{ values.get('full_name','') }}" required></div>
+        <div class="col-md-6"><label class="form-label" for="email">Email address</label>
+          <input class="form-control" id="email" name="email" type="email" value="{{ values.get('email','') }}" required></div>
+        <div class="col-md-4"><label class="form-label" for="age">Age</label>
+          <input class="form-control" id="age" name="age" type="number" min="16" max="70" value="{{ values.get('age','') }}" required></div>
+        <div class="col-md-4"><label class="form-label" for="gender">Gender</label>
+          <select class="form-select" id="gender" name="gender" required>
+            <option value="" disabled {{ 'selected' if not values.get('gender') }}>Select</option>
+            {% for g in genders %}<option value="{{ g }}" {{ 'selected' if values.get('gender') == g }}>{{ g }}</option>{% endfor %}
+          </select></div>
+        <div class="col-md-4"><label class="form-label" for="study_year">Year of study</label>
+          <select class="form-select" id="study_year" name="study_year" required>
+            <option value="" disabled {{ 'selected' if not values.get('study_year') }}>Select</option>
+            {% for n, label in study_years %}<option value="{{ n }}" {{ 'selected' if values.get('study_year')|string == n|string }}>{{ label }}</option>{% endfor %}
+          </select></div>
+        <div class="col-12"><label class="form-label" for="programme">Faculty / programme</label>
+          <input class="form-control" id="programme" name="programme" value="{{ values.get('programme','') }}" placeholder="e.g. Computer Science and Engineering" required></div>
+        <div class="col-md-6"><label class="form-label" for="password">Password</label>
+          <input class="form-control" id="password" name="password" type="password" minlength="8" placeholder="At least 8 characters" autocomplete="new-password" required></div>
+        <div class="col-md-6"><label class="form-label" for="confirm_password">Confirm password</label>
+          <input class="form-control" id="confirm_password" name="confirm_password" type="password" minlength="8" autocomplete="new-password" required></div>
+      </div>
+      <button class="btn btn-brand w-100 py-2 mt-4" type="submit">Create account</button>
+    </form>
+    <p class="text-center text-muted-sd mt-4 mb-0" style="font-size:.9rem">Already registered? <a href="{{ url_for('accounts.login') }}" class="fw-semibold">Log in</a></p>
+  </div>
+</div></div>
+{% endblock %}

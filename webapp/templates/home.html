@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Machine Learning-Based Stress Detection{% endblock %}
+{% block content %}
+<section class="hero" id="top">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <span class="eyebrow">For university students</span>
+        <h1 class="mt-2 mb-3">Machine Learning-Based <span class="text-gradient">Stress Detection</span> for University Students</h1>
+        <p class="lead mb-4">Answer 20 short statements about your studies, sleep, support and how you have been feeling. A Random Forest model estimates your stress level and gives you practical, personalised suggestions.</p>
+        <div class="d-flex flex-wrap gap-2">
+          {% if current_user.is_authenticated %}
+            <a class="btn btn-brand btn-lg" href="{{ url_for('pages.assessment') }}">Start Assessment</a>
+          {% else %}
+            <a class="btn btn-brand btn-lg" href="{{ url_for('accounts.register') }}">Start Free Assessment</a>
+            <a class="btn btn-ghost btn-lg" href="{{ url_for('accounts.login') }}">Log in</a>
+          {% endif %}
+        </div>
+        <p class="disclaimer mt-3 mb-0">A screening aid, not a diagnosis. Takes about 5 minutes.</p>
+      </div>
+      <div class="col-lg-6">
+        <div class="preview-card">
+          <div class="preview-tag mb-3">Example result (illustration only)</div>
+          <div class="d-flex align-items-center gap-3">
+            <div class="gauge" style="width:130px;height:130px">
+              <svg viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="52" fill="none" stroke="#EEF2F6" stroke-width="13" stroke-linecap="round" stroke-dasharray="245.0 326.7" transform="rotate(135 70 70)"/>
+                <circle cx="70" cy="70" r="52" fill="none" stroke="#F59E0B" stroke-width="13" stroke-linecap="round" stroke-dasharray="142.1 326.7" transform="rotate(135 70 70)"/>
+              </svg>
+              <div class="gauge-center"><div class="num" style="font-size:1.9rem">58</div><div class="cap">Index</div></div>
+            </div>
+            <div>
+              <span class="lvl-badge moderate lg">Moderate</span>
+              <div class="text-muted-sd mt-2" style="font-size:.85rem">Your top factors and a personalised plan appear next to your result.</div>
+            </div>
+          </div>
+          <hr>
+          <div class="factor-row mb-2"><div class="factor-top"><span class="name">Study Load &amp; Balance</span><span class="tag high">High burden</span></div><div class="factor-track"><div class="factor-bar high" style="width:80%"></div></div></div>
+          <div class="factor-row mb-0"><div class="factor-top"><span class="name">Sleep Quality</span><span class="tag moderate">Moderate impact</span></div><div class="factor-track"><div class="factor-bar moderate" style="width:55%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="container">
+    <div class="eyebrow text-center">Core capabilities</div>
+    <h2 class="section-title">Supporting student wellbeing</h2>
+    <p class="section-sub">Built around what research links to student stress: academic pressure, sleep, social support and how you feel day to day.</p>
+    <div class="row g-4">
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon chip-teal"><i class="bi bi-diagram-3"></i></div><h3 class="h6 fw-bold">ML-based stress prediction</h3><p class="text-muted-sd mb-0" style="font-size:.9rem">A Random Forest classifier estimates whether your stress level is Low, Moderate or High from your questionnaire answers.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon chip-dark"><i class="bi bi-heart-pulse"></i></div><h3 class="h6 fw-bold">Questions from a student survey</h3><p class="text-muted-sd mb-0" style="font-size:.9rem">Section A covers contributing factors such as coursework, money, sleep and support. Section B covers how you have been feeling.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon chip-slate"><i class="bi bi-stars"></i></div><h3 class="h6 fw-bold">Personalised advice</h3><p class="text-muted-sd mb-0" style="font-size:.9rem">Suggestions match the factors that weigh most in your own answers, so they are not one-size-fits-all.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section pt-0" id="how">
+  <div class="container">
+    <div class="eyebrow text-center">Workflow</div>
+    <h2 class="section-title">Three simple steps</h2>
+    <p class="section-sub">No equipment, wearables or specialist software. Just a browser.</p>
+    <div class="row g-4 text-center">
+      <div class="col-md-4"><div class="step-num">1</div><h3 class="h6 fw-bold">Take the assessment</h3><p class="text-muted-sd" style="font-size:.9rem">Rate 20 statements across four short steps.</p></div>
+      <div class="col-md-4"><div class="step-num">2</div><h3 class="h6 fw-bold">Model analysis</h3><p class="text-muted-sd" style="font-size:.9rem">The trained model estimates your stress level and which factors weigh most.</p></div>
+      <div class="col-md-4"><div class="step-num">3</div><h3 class="h6 fw-bold">Get results and guidance</h3><p class="text-muted-sd" style="font-size:.9rem">See your result, track it over time and follow a personalised plan.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-band">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4"><div class="big">20</div><div class="lbl">questions, about 5 minutes</div></div>
+      <div class="col-md-4"><div class="big">{{ '%.0f' % (scores.accuracy * 100) }}%</div><div class="lbl">test accuracy on the public training dataset*</div></div>
+      <div class="col-md-4"><div class="big">3</div><div class="lbl">levels: Low, Moderate, High</div></div>
+    </div>
+    <p class="mt-4 mb-0" style="font-size:.75rem;color:#C7D2FE">*Measured on a held-out part of a public Kaggle dataset. This is not clinical validation and does not guarantee the same accuracy for real students.</p>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="container" style="max-width:780px">
+    <div class="eyebrow text-center">Got questions?</div>
+    <h2 class="section-title mb-4">Frequently asked questions</h2>
+    <div class="accordion" id="faqAccordion">
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#faq1">Is this assessment a clinical diagnostic tool?</button></h3>
+        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion"><div class="accordion-body">No. It is a machine learning screening aid designed to raise awareness of stress tendencies. It cannot diagnose any condition. If you are worried about your wellbeing, please speak to a qualified professional or your university counselling service.</div></div></div>
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq2">Who can see my results?</button></h3>
+        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Your results are shown only to you when you are signed in. There is no administrator view in this system. Passwords are stored as one-way hashes, and you can delete your account and all your stored assessments at any time from the Student Profile page.</div></div></div>
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq3">How often should I take the assessment?</button></h3>
+        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Every two weeks works well for tracking changes, and again during stressful periods such as exams or deadlines.</div></div></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

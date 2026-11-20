@@ -1,0 +1,65 @@
+{% extends "app_base.html" %}
+{% from "_macros.html" import level_badge %}
+{% block title %}History Log{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Assessment History</h1><p>A complete record of your stress assessments over time.</p></div></div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="stat-card accent-teal"><span class="chip chip-teal stat-icon"><i class="bi bi-collection"></i></span>
+    <div class="stat-label">Total assessments</div><div class="stat-value">{{ stats.total }}</div></div></div>
+  <div class="col-md-4"><div class="stat-card accent-dark"><span class="chip chip-dark stat-icon"><i class="bi bi-speedometer2"></i></span>
+    <div class="stat-label">Average stress index</div>
+    <div class="stat-value">{{ stats.average if stats.average is not none else '-' }}{% if stats.average is not none %} / 100{% endif %}</div></div></div>
+  <div class="col-md-4"><div class="stat-card accent-slate"><span class="chip chip-slate stat-icon"><i class="bi bi-graph-up-arrow"></i></span>
+    <div class="stat-label">Trend</div><div class="stat-value">{{ stats.trend.label }}</div>
+    <div class="stat-sub">{{ stats.trend.detail }}</div></div></div>
+</div>
+
+<div class="sd-card">
+  <form method="get" class="d-flex flex-wrap gap-2 mb-3">
+    <select name="period" class="form-select w-auto" onchange="this.form.submit()">
+      <option value="all" {{ 'selected' if period == 'all' }}>Date range: all time</option>
+      <option value="30" {{ 'selected' if period == '30' }}>Last 30 days</option>
+      <option value="90" {{ 'selected' if period == '90' }}>Last 90 days</option></select>
+    <select name="level" class="form-select w-auto" onchange="this.form.submit()">
+      <option value="all" {{ 'selected' if level == 'all' }}>Stress level: all</option>
+      {% for l in ['Low', 'Moderate', 'High'] %}<option value="{{ l }}" {{ 'selected' if level == l }}>{{ l }}</option>{% endfor %}</select>
+    <select name="sort" class="form-select w-auto ms-md-auto" onchange="this.form.submit()">
+      <option value="newest" {{ 'selected' if sort == 'newest' }}>Sort: newest first</option>
+      <option value="oldest" {{ 'selected' if sort == 'oldest' }}>Oldest first</option>
+      <option value="highest" {{ 'selected' if sort == 'highest' }}>Highest stress first</option>
+      <option value="lowest" {{ 'selected' if sort == 'lowest' }}>Lowest stress first</option></select>
+  </form>
+
+  {% if pagination.items %}
+  <div class="table-wrap"><table class="sd-table">
+    <thead><tr><th>Date &amp; time</th><th>Stress level</th><th>Study load</th><th>Sleep quality</th><th>Key factors</th><th></th></tr></thead>
+    <tbody>
+    {% for p in pagination.items %}
+      {% set inputs = p.model_inputs %}
+      <tr><td class="fw-semibold">{{ p.prediction_date|dt }}</td>
+          <td>{{ level_badge(p.stress_level, p.stress_index) }}</td>
+          <td>{{ '%.1f'|format(inputs.study_load) if inputs.study_load is defined else '-' }} / 5</td>
+          <td>{{ '%.1f'|format(inputs.sleep_quality) if inputs.sleep_quality is defined else '-' }} / 5</td>
+          <td>{{ p.key_factors_text }}</td>
+          <td class="text-end"><a href="{{ url_for('pages.results', prediction_id=p.prediction_id) }}">View</a></td></tr>
+    {% endfor %}
+    </tbody></table></div>
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+    <span class="text-muted-sd" style="font-size:.85rem">Showing {{ pagination.first }} to {{ pagination.last }} of {{ pagination.total }} assessments</span>
+    {% if pagination.pages > 1 %}
+    <nav><ul class="pagination pagination-sm mb-0">
+      <li class="page-item {{ 'disabled' if not pagination.has_prev }}"><a class="page-link" href="{{ url_for('pages.history', page=pagination.prev_num, period=period, level=level, sort=sort) if pagination.has_prev else '#' }}">Previous</a></li>
+      {% for n in pagination.iter_pages() %}
+        {% if n %}<li class="page-item {{ 'active' if n == pagination.page }}"><a class="page-link" href="{{ url_for('pages.history', page=n, period=period, level=level, sort=sort) }}">{{ n }}</a></li>
+        {% else %}<li class="page-item disabled"><span class="page-link">...</span></li>{% endif %}
+      {% endfor %}
+      <li class="page-item {{ 'disabled' if not pagination.has_next }}"><a class="page-link" href="{{ url_for('pages.history', page=pagination.next_num, period=period, level=level, sort=sort) if pagination.has_next else '#' }}">Next</a></li>
+    </ul></nav>
+    {% endif %}
+  </div>
+  {% else %}
+    <p class="text-muted-sd text-center py-4 mb-0">No assessments match these filters yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

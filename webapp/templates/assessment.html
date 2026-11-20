@@ -1,0 +1,63 @@
+{% extends "app_base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}New Assessment{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Student Stress Assessment</h1>
+  <p>20 statements, 4 short steps. Answer honestly: there are no right or wrong answers, and only you can see your results.</p></div></div>
+
+<form method="post" id="assessmentForm" novalidate>
+  {{ csrf() }}
+  <div class="step-head">
+    <div class="step-label" id="stepLabel">Step 1 of {{ steps|length }}</div>
+    <div class="step-track"><div class="step-fill" id="stepFill"></div></div>
+  </div>
+
+  <!-- Step 1: details come from the student's profile -->
+  <section class="step-panel theme-teal" data-title="{{ steps[0].title }}">
+    <div class="step-card">
+      <div class="step-card-head"><span class="chip step-chip"><i class="bi {{ steps[0].icon }}"></i></span>
+        <div><h2>{{ steps[0].title }}</h2><p>{{ steps[0].blurb }}</p></div></div>
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">Full name</label><input class="form-control" value="{{ current_user.full_name }}" readonly></div>
+        <div class="col-md-3"><label class="form-label">Age</label><input class="form-control" value="{{ current_user.age }}" readonly></div>
+        <div class="col-md-3"><label class="form-label">Gender</label><input class="form-control" value="{{ current_user.gender }}" readonly></div>
+        <div class="col-md-8"><label class="form-label">Faculty / programme</label><input class="form-control" value="{{ current_user.programme }}" readonly></div>
+        <div class="col-md-4"><label class="form-label">Year of study</label><input class="form-control" value="{{ year_names[current_user.study_year] }}" readonly></div>
+      </div>
+      <p class="readonly-note mt-3 mb-0">These come from your profile. <a href="{{ url_for('pages.profile') }}">Update them in Student Profile</a> if needed.</p>
+    </div>
+  </section>
+
+  <!-- Steps 2-4: the 20 statements -->
+  {% for step in steps[1:] %}
+  <section class="step-panel theme-{{ step.theme }} d-none" data-title="{{ step.title }}">
+    <div class="step-card">
+      <div class="step-card-head"><span class="chip step-chip"><i class="bi {{ step.icon }}"></i></span>
+        <div><h2>{{ step.title }}</h2><p>{{ step.blurb }}</p></div></div>
+      {% for q in questions if q.step == step.number %}
+      <div class="question">
+        <p class="q-text"><span class="q-num">{{ q.number }}</span>{{ q.text }}</p>
+        <div class="likert" role="radiogroup" aria-label="Question {{ q.number }}">
+          {% for value, label in likert_options %}
+            <input type="radio" class="btn-check" name="{{ q.code }}" id="{{ q.code }}_{{ value }}" value="{{ value }}" {{ 'checked' if values.get(q.code)|string == value|string }}>
+            <label class="likert-opt" for="{{ q.code }}_{{ value }}"><span class="n">{{ value }}</span><span class="t">{{ label }}</span></label>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+
+  <div class="text-danger mt-3 d-none" id="stepError"><i class="bi bi-exclamation-circle"></i> Please answer every question on this step.</div>
+  <div class="d-flex justify-content-between mt-4">
+    <button type="button" class="btn btn-ghost" id="btnBack">Back</button>
+    <div>
+      <button type="button" class="btn btn-brand" id="btnNext">Next Step</button>
+      <button type="submit" class="btn btn-brand d-none" id="btnSubmit">Submit Assessment</button>
+    </div>
+  </div>
+  <p class="disclaimer mt-3">If you ever feel unsafe or think about harming yourself, please stop and contact your local emergency services or university counselling centre. {{ support_text }}</p>
+</form>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/assessment.js') }}"></script>{% endblock %}

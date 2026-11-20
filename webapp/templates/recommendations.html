@@ -1,0 +1,32 @@
+{% extends "app_base.html" %}
+{% block title %}Recommendations{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Your Wellness Recommendations</h1>
+  <p>{% if latest %}Based on your latest assessment ({{ latest.prediction_date|dt('%d %b %Y') }}).{% else %}Take an assessment to get suggestions matched to your answers. General ideas are below.{% endif %}</p></div></div>
+
+{% if plan %}
+<div class="rec-group first"><span class="chip chip-teal"><i class="bi bi-flag"></i></span><h2>Primary intervention areas</h2></div>
+<div class="row g-3">
+  {% for item in plan %}
+  <div class="col-md-6 col-xl-4"><div class="rec-card">
+    <div class="d-flex justify-content-between align-items-start mb-2"><span class="chip chip-teal"><i class="bi bi-bullseye"></i></span><span class="urg {{ item.urgency }}">{{ item.urgency }}</span></div>
+    <h3>{{ item.title }}</h3><p class="mt-1">{{ item.detail }}</p>
+  </div></div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="sd-card"><p class="mb-2">You have no assessments yet, so there are no personalised suggestions.</p>
+  <a class="btn btn-brand btn-sm" href="{{ url_for('pages.assessment') }}">Take an assessment</a></div>
+{% endif %}
+
+<div class="rec-group"><span class="chip chip-dark"><i class="bi bi-flower1"></i></span><h2>Mindfulness &amp; relaxation</h2></div>
+<div class="row g-3">
+  {% for r in mindfulness %}<div class="col-md-4"><div class="rec-card dark"><h3>{{ r.title }}</h3><div class="mins">{{ r.mins }} MINS</div><p>{{ r.text }}</p></div></div>{% endfor %}
+</div>
+<div class="rec-group"><span class="chip chip-slate"><i class="bi bi-bicycle"></i></span><h2>Physical activity</h2></div>
+<div class="row g-3">
+  {% for r in physical %}<div class="col-md-4"><div class="rec-card slate"><h3>{{ r.title }}</h3><div class="mins">{{ r.mins }} MINS</div><p>{{ r.text }}</p></div></div>{% endfor %}
+</div>
+<div class="support-box mt-4"><b><i class="bi bi-life-preserver"></i> Need to talk to someone?</b> {{ support_text }}</div>
+<p class="disclaimer mt-3">These are general wellbeing ideas, not medical advice.</p>
+{% endblock %}

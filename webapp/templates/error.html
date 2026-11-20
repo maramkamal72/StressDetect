@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ code }}{% endblock %}
+{% block content %}
+<div class="container error-page">
+  <div class="code">{{ code }}</div>
+  <h1 class="h4 mt-2">{{ message }}</h1>
+  <a class="btn btn-brand mt-3" href="{{ url_for('pages.home') }}">Back to home</a>
+</div>
+{% endblock %}
